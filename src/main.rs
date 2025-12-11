@@ -6,6 +6,7 @@ use actix_web::middleware::Logger;
 use actix_ws::{CloseCode, Message};
 use dashmap::{DashMap, Entry};
 use futures_channel::oneshot;
+use log::{Level, LevelFilter};
 use serde::{Deserialize, Serialize};
 use crate::req_code::RequestCode;
 
@@ -159,8 +160,19 @@ async fn fetch(code: web::Path<RequestCode>) -> impl Responder {
     HttpResponse::Ok().body(to_json_str(&request))
 }
 
+
+#[get("/")]
+async fn index_page() -> impl Responder {
+    "why are you on the index page of an API????"
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    pretty_env_logger::formatted_builder()
+        .filter_level(LevelFilter::Info)
+        .init();
+    log::set_max_level(LevelFilter::Info);
+
     let (shutdown_tx, shutdown_rx) = oneshot::channel();
     defer::defer(move || {
         let _ = shutdown_tx.send(());
@@ -185,6 +197,7 @@ async fn main() -> std::io::Result<()> {
 
     let app_builder = || {
         App::new()
+            .service(index_page)
             .service(listen)
             .service(resolve)
             .service(fetch)
@@ -195,7 +208,7 @@ async fn main() -> std::io::Result<()> {
 
     let sock = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 80));
 
-    println!("listening on {sock}");
+    log::info!("listening on {sock}");
 
     HttpServer::new(app_builder)
         .bind(sock)?
