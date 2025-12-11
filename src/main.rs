@@ -6,7 +6,7 @@ use actix_web::middleware::Logger;
 use actix_ws::{CloseCode, Message};
 use dashmap::{DashMap, Entry};
 use futures_channel::oneshot;
-use log::{Level, LevelFilter};
+use log::LevelFilter;
 use serde::{Deserialize, Serialize};
 use crate::req_code::RequestCode;
 
