@@ -5,7 +5,7 @@ use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Resp
 use actix_web::middleware::Logger;
 use actix_ws::{CloseCode, Message};
 use dashmap::{DashMap, Entry};
-use futures_channel::oneshot;
+use tokio::sync::oneshot;
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
 use crate::req_code::RequestCode;
